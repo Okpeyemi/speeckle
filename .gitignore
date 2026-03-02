@@ -36,6 +36,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# generated output & temp files (audio segments, etc.)
+/output/
+/tmp/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
