@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { splitAudio } from "@/lib/audio/splitAudio";
 import path from "path";
 import fs from "fs";
+import os from "os";
 
 // Serverless max execution time (seconds)
 export const maxDuration = 300;
@@ -22,20 +23,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const tempDir = path.join(process.cwd(), "tmp");
-    fs.mkdirSync(tempDir, { recursive: true });
-
+    const tempDir = os.tmpdir();
     const ext = audioFile.name.split(".").pop() || "bin";
     const inputPath = path.join(tempDir, `input_${Date.now()}.${ext}`);
     const buffer = Buffer.from(await audioFile.arrayBuffer());
     fs.writeFileSync(inputPath, buffer);
 
-    const outputDir = path.join(
-      process.cwd(),
-      "output",
-      "segments",
-      `session_${Date.now()}`
-    );
+    const sessionId = `session_${Date.now()}`;
+    const outputDir = path.join(os.tmpdir(), "speeckle_segments", sessionId);
 
     const result = await splitAudio(inputPath, outputDir, {
       silenceThreshold: silenceThreshold || "-30dB",
@@ -52,6 +47,7 @@ export async function POST(request: NextRequest) {
         totalDuration: result.totalDuration,
         segmentCount: result.segments.length,
         silencesDetected: result.silencesDetected,
+        sessionId,
         outputDir,
         segments: result.segments.map((s) => ({
           id: s.id,

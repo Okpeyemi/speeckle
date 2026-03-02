@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import fs from "fs";
+import os from "os";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -11,11 +12,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Paramètres manquants" }, { status: 400 });
   }
 
-  // Prevent path traversal: resolve must stay within output/
+  // Prevent path traversal: resolve must stay within output/ or /tmp/speeckle_segments/
   const outputBase = path.resolve(process.cwd(), "output");
+  const tmpBase = path.join(os.tmpdir(), "speeckle_segments");
   const resolvedDir = path.resolve(dir);
 
-  if (!resolvedDir.startsWith(outputBase)) {
+  if (!resolvedDir.startsWith(outputBase) && !resolvedDir.startsWith(tmpBase)) {
     return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
   }
 
