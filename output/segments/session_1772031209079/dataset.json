@@ -1,0 +1,248 @@
+[
+  {
+    "audio": "segment_0000.wav",
+    "text": "IZLAYƐ́LI VÍ LƐ́Ɛ TƆN Tɔ́gbó tɔgbo",
+    "duration": 6.786,
+    "confidence": 0.5429
+  },
+  {
+    "audio": "segment_0002.wav",
+    "text": "wǒ lɛ́ɛ, bɛ́ sín Adámu jí yi Esawu ví",
+    "duration": 8.672,
+    "confidence": 0.5467
+  },
+  {
+    "audio": "segment_0003.wav",
+    "text": "Adámu ji Sɛ́ti, bɔ Sɛ́ti ji Enɔci. Enɔci ji Kenáni, bɔ",
+    "duration": 8.474,
+    "confidence": 0.4313
+  },
+  {
+    "audio": "segment_0004.wav",
+    "text": "Kenáni ji Maxalalɛ́li, Maxalalɛ́li ji Yɛlɛ́di. Yɛlɛ́di ji",
+    "duration": 8.672,
+    "confidence": 0.4615
+  },
+  {
+    "audio": "segment_0008.wav",
+    "text": "Magɔ́gi, Madayi, Yaváni, Tubalu, Mɛcɛ́ki",
+    "duration": 7.841,
+    "confidence": 0.4872
+  },
+  {
+    "audio": "segment_0012.wav",
+    "text": "Misilayimu, Púti kpó Kanáa kpó. Kúci",
+    "duration": 7.744,
+    "confidence": 0.4091
+  },
+  {
+    "audio": "segment_0014.wav",
+    "text": "Savuteka kpán. Hlaema ví lɛ́ɛ ɖíe: Saba kpódó Dedáni kpó.",
+    "duration": 8.331,
+    "confidence": 0.4081
+  },
+  {
+    "audio": "segment_0015.wav",
+    "text": "Kúci wɛ lɛ́ ji Nɛmulɔ́di; Nɛmulɔ́di ɔ́",
+    "duration": 5.718,
+    "confidence": 0.4952
+  },
+  {
+    "audio": "segment_0016.wav",
+    "text": "wɛ nyí ahwanfuntɔ́ syɛ́nsyɛ́n nukɔntɔn e ɖo ayǐkúngban ɔ́ jí é. Lǔdinu",
+    "duration": 8.025,
+    "confidence": 0.4716
+  },
+  {
+    "audio": "segment_0018.wav",
+    "text": "lɛ́ɛ, Patlɔ́sinu lɛ́ɛ, Kasluaxinu lɛ́ɛ kpódó",
+    "duration": 7.71,
+    "confidence": 0.4842
+  },
+  {
+    "audio": "segment_0020.wav",
+    "text": "wɛ Filisitɛ́ɛn lɛ́ɛ gosín. Kanáa ji Sidɔ́ɔn, bó ji Xɛti.",
+    "duration": 7.937,
+    "confidence": 0.664
+  },
+  {
+    "audio": "segment_0024.wav",
+    "text": "Semáa ví lɛ́ɛ, kpódó Hamátinu lɛ́ɛ kpó sín tɔ́gbó lɛ́ɛ",
+    "duration": 8.172,
+    "confidence": 0.7057
+  },
+  {
+    "audio": "segment_0026.wav",
+    "text": "Aapakisadu, Lǔdi, Alamu, Wúsi, Huli,",
+    "duration": 8.002,
+    "confidence": 0.9355
+  },
+  {
+    "audio": "segment_0028.wav",
+    "text": "bɔ Cɛláxi ji Ebɛ́ɛ. Vǐ súnnu we wɛ Ebɛ́ɛ ji. Mɛ ɖokpó nɔ nyí",
+    "duration": 8.687,
+    "confidence": 0.4143
+  },
+  {
+    "audio": "segment_0029.wav",
+    "text": "Pɛlɛ́gi, Pɛlɛ́gi sín tínmɛ wɛ nyí “Mima”, ɖó hwetɔnnu wɛ è mǎ ayǐkúngban ɔ́.",
+    "duration": 8.85,
+    "confidence": 0.4629
+  },
+  {
+    "audio": "segment_0030.wav",
+    "text": "Nɔví tɔn ká nɔ nyí Yokitáni. Yokitáni ji Alumɔdadi, Cɛlɛ́fu,",
+    "duration": 8.794,
+    "confidence": 0.523
+  },
+  {
+    "audio": "segment_0033.wav",
+    "text": "Yovavu kpó. Yě mɛ énɛ́ lɛ́ɛ bǐ wɛ nyí Yokitáni",
+    "duration": 7.796,
+    "confidence": 0.5612
+  },
+  {
+    "audio": "segment_0036.wav",
+    "text": "ji Selúgi, Selúgi ji Naxɔ́ɔ, Naxɔ́ɔ ji Tɛláxi.",
+    "duration": 8.766,
+    "confidence": 0.5261
+  },
+  {
+    "audio": "segment_0037.wav",
+    "text": "Tɛláxi ka ji Ablámu; Ablámu ɔ́",
+    "duration": 4.929,
+    "confidence": 0.5824
+  },
+  {
+    "audio": "segment_0038.wav",
+    "text": "è wǎ ɖó nyǐkɔ ná ɖɔ Ablaxámu. Ablaxámu ví lɛ́ɛ ɖíe: Izáki",
+    "duration": 8.723,
+    "confidence": 0.6847
+  },
+  {
+    "audio": "segment_0039.wav",
+    "text": "Isimayɛ́li kpó. Vǐ yětɔn lɛ́ɛ ɖíe: Nɛbayɔ́ti,",
+    "duration": 5.474,
+    "confidence": 0.5109
+  },
+  {
+    "audio": "segment_0040.wav",
+    "text": "é wɛ nyí nukɔngbéví Isimayɛ́li tɔn. Kedáa, Adibeɛli, Mivusámu,",
+    "duration": 7.429,
+    "confidence": 0.41
+  },
+  {
+    "audio": "segment_0043.wav",
+    "text": "Isimayɛ́li ví lɛ́ɛ nɛ́. Ketúla Ablaxámu sín asi ɔ́, vǐ tɔn lɛ́ɛ ɖíe:",
+    "duration": 8.412,
+    "confidence": 0.6297
+  },
+  {
+    "audio": "segment_0044.wav",
+    "text": "Zimulani, Yokicáni, Mɛdani, Madiáani, Yicibaku",
+    "duration": 8.751,
+    "confidence": 0.9333
+  },
+  {
+    "audio": "segment_0046.wav",
+    "text": "Dedáni kpó. Madiáani ví lɛ́ɛ ɖíe: Eyifa, Efɛ́ɛ,",
+    "duration": 8.02,
+    "confidence": 0.4689
+  },
+  {
+    "audio": "segment_0047.wav",
+    "text": "Hanɔki, Avida kpódó Ɛlidáa kpó.",
+    "duration": 5.865,
+    "confidence": 0.4621
+  },
+  {
+    "audio": "segment_0048.wav",
+    "text": "Yě mɛ énɛ́ lɛ́ɛ bǐ wɛ nyí vǐ súnnu Ketúla tɔn. Ablaxámu ji",
+    "duration": 7.466,
+    "confidence": 0.5217
+  },
+  {
+    "audio": "segment_0049.wav",
+    "text": "Izáki; Izáki ví lɛ́ɛ ɖíe: Esawu kpó Izlayɛ́li kpó.",
+    "duration": 7.001,
+    "confidence": 0.4489
+  },
+  {
+    "audio": "segment_0051.wav",
+    "text": "Yaelámu kpódó Koláxi kpó. Elifázi ví lɛ́ɛ ɖíe: Temani,",
+    "duration": 7.9,
+    "confidence": 0.5147
+  },
+  {
+    "audio": "segment_0054.wav",
+    "text": "Zeláxi, Camuma kpó Miziza kpó. Seyíi ví",
+    "duration": 8.019,
+    "confidence": 0.4051
+  },
+  {
+    "audio": "segment_0055.wav",
+    "text": "Lotáni, Covalu, Siveɔ́ni, Esɛ́ɛ kpó",
+    "duration": 7.816,
+    "confidence": 0.5333
+  },
+  {
+    "audio": "segment_0056.wav",
+    "text": "Dicɔ́ni kpó. Siveɔ́ni wɛ ji Ana, bó nyí",
+    "duration": 6.832,
+    "confidence": 0.4764
+  },
+  {
+    "audio": "segment_0058.wav",
+    "text": "Lotáni ɖó nɔví nyɔ̌nu ɖokpó, bɔ è nɔ ylɔ́ ɛ ɖɔ Timuna. Covalu",
+    "duration": 8.599,
+    "confidence": 0.6547
+  },
+  {
+    "audio": "segment_0060.wav",
+    "text": "kpódó Ɔnámu kpó. Siveɔ́ni ví lɛ́ɛ ɖíe: Aya kpó",
+    "duration": 8.99,
+    "confidence": 0.4388
+  },
+  {
+    "audio": "segment_0064.wav",
+    "text": "Wúsi kpódó Alani kpán. Axɔ́sú Edɔ́mu tɔn lɛ́ɛ kpó hɛ̌nnugán lɛ́ɛ kpó",
+    "duration": 8.737,
+    "confidence": 0.4274
+  },
+  {
+    "audio": "segment_0065.wav",
+    "text": "Axɔ́sú e yi axɔ́súzinkpo Edɔ́mu tɔn jí ɖě jɛ ɖě gúdo",
+    "duration": 7.281,
+    "confidence": 0.5909
+  },
+  {
+    "audio": "segment_0066.wav",
+    "text": "cóbɔ axɔ́sú ɖokpó wá jɛ Izlayɛ́li togun ɔ́ nu ɔ́, nyǐkɔ yětɔn lɛ́ɛ",
+    "duration": 8.229,
+    "confidence": 0.6607
+  },
+  {
+    "audio": "segment_0067.wav",
+    "text": "Bɛ́la, Beɔ́ɔ ví ɔ́, Dinavanu wɛ. Bɛ́la wá",
+    "duration": 7.032,
+    "confidence": 0.6306
+  },
+  {
+    "audio": "segment_0068.wav",
+    "text": "lɔ wá kú, bɔ Cawúlu Hlexɔvɔ́tinu e ɖo Efláti tɔ jí ɔ́ ɖu axɔ́sú ɖó tɛn tɔn mɛ.",
+    "duration": 7.695,
+    "confidence": 0.4699
+  },
+  {
+    "audio": "segment_0069.wav",
+    "text": "lɔ wá kú, bɔ Hadádi Payíinu ɔ́ ɖu axɔ́sú ɖó",
+    "duration": 7.984,
+    "confidence": 0.4005
+  },
+  {
+    "audio": "segment_0081.wav",
+    "text": "Aliya, Yetɛ́ti, Oxoliváma, Ela, Pinɔ́nu,",
+    "duration": 7.742,
+    "confidence": 0.8073
+  }
+]

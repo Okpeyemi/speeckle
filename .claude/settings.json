@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install uuid)",
+      "Bash(npm install -D @types/uuid)",
+      "Bash(npx shadcn@latest add progress scroll-area --yes)",
+      "Bash(node -e \"require\\(''radix-ui''\\); console.log\\(''ok''\\)\" --prefix /home/darellchooks/Bureau/speeckle)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); exports=d.get\\(''exports'',{}\\); [print\\(k\\) for k in exports.keys\\(\\) if ''progress'' in k.lower\\(\\) or ''scroll'' in k.lower\\(\\)]\")",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\(''/home/darellchooks/Bureau/speeckle/node_modules/radix-ui/package.json''\\)\\); [print\\(k\\) for k in d.get\\(''exports'',{}\\).keys\\(\\)]\")",
+      "Bash(python3 -c \":*)",
+      "Bash(python3:*)",
+      "Bash(npx tsc --noEmit)"
+    ]
+  }
+}
