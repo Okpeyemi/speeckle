@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import LatencyBadge from "./LatencyBadge";
+import ModelBadge from "./ModelBadge";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   BrainIcon,
@@ -30,6 +32,26 @@ export default function GeneralPanel({ transcription, onResponse }: GeneralPanel
   const [result, setResult] = useState<GeneralResult | null>(null);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState<"fr" | "comp" | "fon" | null>(null);
+  const [processingMs, setProcessingMs] = useState(0);
+  const [elapsedMs, setElapsedMs] = useState<number | null>(null);
+
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const startRef = useRef<number | null>(null);
+
+  const stopTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    if (startRef.current !== null) {
+      setElapsedMs(performance.now() - startRef.current);
+      startRef.current = null;
+    }
+  };
+
+  useEffect(() => () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+  }, []);
 
   useEffect(() => {
     if (transcription && transcription.trim() !== "") {
@@ -43,6 +65,15 @@ export default function GeneralPanel({ transcription, onResponse }: GeneralPanel
       setState("processing");
       setResult(null);
       setError("");
+      setElapsedMs(null);
+      setProcessingMs(0);
+      startRef.current = performance.now();
+      if (timerRef.current) clearInterval(timerRef.current);
+      timerRef.current = setInterval(() => {
+        if (startRef.current !== null) {
+          setProcessingMs(performance.now() - startRef.current);
+        }
+      }, 50);
 
       const response = await fetch("/api/general", {
         method: "POST",
@@ -53,10 +84,12 @@ export default function GeneralPanel({ transcription, onResponse }: GeneralPanel
       const data: GeneralResult & { error?: string } = await response.json();
       if (data.error) throw new Error(data.error);
 
+      stopTimer();
       setResult(data);
       setState("done");
       onResponse(data.reponse_fon);
     } catch (err) {
+      stopTimer();
       setError(err instanceof Error ? err.message : "Erreur inconnue.");
       setState("error");
     }
@@ -81,9 +114,27 @@ export default function GeneralPanel({ transcription, onResponse }: GeneralPanel
         <span className="font-display text-xs font-semibold tracking-[0.15em] uppercase text-text-secondary">
           Général
         </span>
-        <span className="text-text-dim text-xs font-body ml-auto">
+        <span className="text-text-dim text-xs font-body ml-auto hidden sm:inline">
           Compréhension & Réponse
         </span>
+        <LatencyBadge
+          color="accent-gen"
+          state={state === "processing" ? "live" : state === "done" ? "done" : "idle"}
+          liveMs={processingMs}
+          finalMs={elapsedMs}
+        />
+      </div>
+
+      {/* Model info */}
+      <div className="flex items-center gap-2 px-4 sm:px-5 py-2 border-b border-border/60 bg-surface/30">
+        <span className="text-[9px] font-display font-semibold tracking-widest uppercase text-text-dim shrink-0">
+          Modèle
+        </span>
+        <ModelBadge
+          name="Google Gemini 3 Flash"
+          url="https://ai.google.dev/gemini-api/docs/models"
+          color="accent-gen"
+        />
       </div>
 
       {/* Body */}

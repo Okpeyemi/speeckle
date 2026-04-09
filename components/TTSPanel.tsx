@@ -10,6 +10,8 @@ import {
   VoiceIcon,
   Refresh01Icon,
 } from "@hugeicons/core-free-icons";
+import LatencyBadge from "./LatencyBadge";
+import ModelBadge from "./ModelBadge";
 
 interface TTSPanelProps {
   fonText: string;
@@ -25,8 +27,27 @@ export default function TTSPanel({ fonText }: TTSPanelProps) {
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [isSimulated, setIsSimulated] = useState(false);
+  const [processingMs, setProcessingMs] = useState(0);
+  const [elapsedMs, setElapsedMs] = useState<number | null>(null);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const startRef = useRef<number | null>(null);
+
+  const stopTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    if (startRef.current !== null) {
+      setElapsedMs(performance.now() - startRef.current);
+      startRef.current = null;
+    }
+  };
+
+  useEffect(() => () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+  }, []);
 
   useEffect(() => {
     if (fonText && fonText.trim() !== "") {
@@ -49,6 +70,15 @@ export default function TTSPanel({ fonText }: TTSPanelProps) {
       setAudioUrl(null);
       setDuration(0);
       setCurrentTime(0);
+      setElapsedMs(null);
+      setProcessingMs(0);
+      startRef.current = performance.now();
+      if (timerRef.current) clearInterval(timerRef.current);
+      timerRef.current = setInterval(() => {
+        if (startRef.current !== null) {
+          setProcessingMs(performance.now() - startRef.current);
+        }
+      }, 50);
 
       const response = await fetch("/api/tts", {
         method: "POST",
@@ -63,6 +93,7 @@ export default function TTSPanel({ fonText }: TTSPanelProps) {
         // Real audio stream
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
+        stopTimer();
         setAudioUrl(url);
         setIsSimulated(false);
         setState("ready");
@@ -78,49 +109,99 @@ export default function TTSPanel({ fonText }: TTSPanelProps) {
           for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
           const blob = new Blob([bytes], { type: data.mime_type || "audio/wav" });
           const url = URL.createObjectURL(blob);
+          stopTimer();
           setAudioUrl(url);
           setIsSimulated(false);
           setState("ready");
           setTimeout(() => playAudio(url), 300);
         } else {
           // Placeholder mode
+          stopTimer();
           setIsSimulated(true);
           setState("ready");
         }
       }
     } catch (err) {
+      stopTimer();
       setError(err instanceof Error ? err.message : "Erreur TTS inconnue.");
       setState("error");
     }
   };
 
-  const playAudio = (url?: string) => {
-    const src = url || audioUrl;
-    if (!src || isSimulated) return;
+  const ensureAudio = (url: string): HTMLAudioElement => {
+    if (audioRef.current && audioRef.current.src === url) return audioRef.current;
     if (audioRef.current) audioRef.current.pause();
 
-    const audio = new Audio(src);
+    const audio = new Audio(url);
     audioRef.current = audio;
     audio.onloadedmetadata = () => setDuration(audio.duration);
     audio.ontimeupdate = () => {
       setCurrentTime(audio.currentTime);
-      setProgress((audio.currentTime / audio.duration) * 100);
+      if (audio.duration > 0) setProgress((audio.currentTime / audio.duration) * 100);
     };
-    audio.onended = () => { setState("ready"); setProgress(100); };
-    audio.onerror = () => { setError("Erreur lecture audio."); setState("error"); };
+    audio.onended = () => {
+      setState("ready");
+      setProgress(100);
+      setCurrentTime(audio.duration);
+    };
+    audio.onerror = () => {
+      setError("Erreur lecture audio.");
+      setState("error");
+    };
+    return audio;
+  };
+
+  const playAudio = (url?: string) => {
+    const src = url || audioUrl;
+    if (!src || isSimulated) return;
+    const audio = ensureAudio(src);
+    // Replay from start if previous playback finished
+    if (audio.ended || audio.currentTime >= audio.duration) {
+      audio.currentTime = 0;
+      setProgress(0);
+      setCurrentTime(0);
+    }
     audio.play();
     setState("playing");
   };
 
   const togglePlayPause = () => {
-    if (!audioRef.current || isSimulated) return;
+    if (!audioUrl || isSimulated) return;
     if (state === "playing") {
-      audioRef.current.pause();
+      audioRef.current?.pause();
       setState("paused");
-    } else if (state === "paused") {
-      audioRef.current.play();
-      setState("playing");
+    } else {
+      // handles "ready" (initial or after end) and "paused"
+      playAudio();
     }
+  };
+
+  const applySeek = (clientX: number, rect: DOMRect) => {
+    if (!audioRef.current || !duration) return;
+    const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    const newTime = ratio * duration;
+    audioRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
+    setProgress(ratio * 100);
+  };
+
+  const seekingRef = useRef(false);
+  const handleSeekPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!audioRef.current || !duration) return;
+    seekingRef.current = true;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    applySeek(e.clientX, e.currentTarget.getBoundingClientRect());
+  };
+  const handleSeekPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!seekingRef.current) return;
+    applySeek(e.clientX, e.currentTarget.getBoundingClientRect());
+  };
+  const handleSeekPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!seekingRef.current) return;
+    seekingRef.current = false;
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch {}
   };
 
   const fmt = (s: number) =>
@@ -139,9 +220,33 @@ export default function TTSPanel({ fonText }: TTSPanelProps) {
         <span className="font-display text-xs font-semibold tracking-[0.15em] uppercase text-text-secondary">
           TTS
         </span>
-        <span className="text-text-dim text-xs font-body ml-auto">
+        <span className="text-text-dim text-xs font-body ml-auto hidden sm:inline">
           Synthèse vocale · Fon
         </span>
+        <LatencyBadge
+          color="accent-tts"
+          state={
+            state === "synthesizing"
+              ? "live"
+              : state === "ready" || state === "playing" || state === "paused"
+                ? "done"
+                : "idle"
+          }
+          liveMs={processingMs}
+          finalMs={elapsedMs}
+        />
+      </div>
+
+      {/* Model info */}
+      <div className="flex items-center gap-2 px-4 sm:px-5 py-2 border-b border-border/60 bg-surface/30">
+        <span className="text-[9px] font-display font-semibold tracking-widest uppercase text-text-dim shrink-0">
+          Modèle
+        </span>
+        <ModelBadge
+          name="facebook/mms-tts-fon"
+          url="https://huggingface.co/facebook/mms-tts-fon"
+          color="accent-tts"
+        />
       </div>
 
       {/* Body */}
@@ -212,16 +317,34 @@ export default function TTSPanel({ fonText }: TTSPanelProps) {
                     </div>
                   )}
 
-                  {/* Progress bar */}
+                  {/* Progress bar (clickable + draggable seek) */}
                   {duration > 0 && (
                     <div className="w-full flex flex-col gap-1.5">
-                      <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-accent-tts rounded-full transition-all duration-200"
-                          style={{ width: `${progress}%` }}
-                        />
+                      <div
+                        role="slider"
+                        aria-label="Progression audio"
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-valuenow={Math.round(progress)}
+                        tabIndex={0}
+                        onPointerDown={handleSeekPointerDown}
+                        onPointerMove={handleSeekPointerMove}
+                        onPointerUp={handleSeekPointerUp}
+                        onPointerCancel={handleSeekPointerUp}
+                        className="group w-full py-2 -my-2 cursor-pointer touch-none select-none"
+                      >
+                        <div className="relative w-full h-1.5 bg-muted rounded-full overflow-visible">
+                          <div
+                            className="absolute inset-y-0 left-0 bg-accent-tts rounded-full transition-[width] duration-75"
+                            style={{ width: `${progress}%` }}
+                          />
+                          <div
+                            className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-accent-tts shadow-[0_0_0_3px_rgba(255,107,107,0.25)] opacity-0 group-hover:opacity-100 transition-opacity"
+                            style={{ left: `${progress}%` }}
+                          />
+                        </div>
                       </div>
-                      <div className="flex justify-between text-[10px] font-mono text-text-dim">
+                      <div className="flex justify-between text-[10px] font-mono text-text-dim tabular-nums">
                         <span>{fmt(currentTime)}</span>
                         <span>{fmt(duration)}</span>
                       </div>
@@ -268,7 +391,13 @@ export default function TTSPanel({ fonText }: TTSPanelProps) {
                 }`}
             >
               <HugeiconsIcon icon={state === "playing" ? PauseIcon : PlayIcon} size={16} />
-              {state === "playing" ? "Pause" : "Écouter"}
+              {state === "playing"
+                ? "Pause"
+                : state === "paused"
+                  ? "Reprendre"
+                  : currentTime > 0 && currentTime >= duration && duration > 0
+                    ? "Rejouer"
+                    : "Écouter"}
             </button>
           )}
 

@@ -11,6 +11,8 @@ import {
   AudioWave01Icon,
   ArrowRight02Icon,
 } from "@hugeicons/core-free-icons";
+import LatencyBadge from "./LatencyBadge";
+import ModelBadge from "./ModelBadge";
 
 interface ASRPanelProps {
   onTranscription: (text: string) => void;
@@ -84,10 +86,14 @@ export default function ASRPanel({ onTranscription }: ASRPanelProps) {
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
+  const [processingMs, setProcessingMs] = useState(0);
+  const [elapsedMs, setElapsedMs] = useState<number | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const processingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const processingStartRef = useRef<number | null>(null);
 
   const startRecording = useCallback(async () => {
     try {
@@ -143,7 +149,27 @@ export default function ASRPanel({ onTranscription }: ASRPanelProps) {
     if (timerRef.current) clearInterval(timerRef.current);
     mediaRecorderRef.current?.stop();
     setState("processing");
+    setElapsedMs(null);
+    setProcessingMs(0);
+    processingStartRef.current = performance.now();
+    if (processingTimerRef.current) clearInterval(processingTimerRef.current);
+    processingTimerRef.current = setInterval(() => {
+      if (processingStartRef.current !== null) {
+        setProcessingMs(performance.now() - processingStartRef.current);
+      }
+    }, 50);
   }, []);
+
+  const stopProcessingTimer = () => {
+    if (processingTimerRef.current) {
+      clearInterval(processingTimerRef.current);
+      processingTimerRef.current = null;
+    }
+    if (processingStartRef.current !== null) {
+      setElapsedMs(performance.now() - processingStartRef.current);
+      processingStartRef.current = null;
+    }
+  };
 
   const sendToASR = async (audioBlob: Blob) => {
     try {
@@ -154,10 +180,12 @@ export default function ASRPanel({ onTranscription }: ASRPanelProps) {
       if (!response.ok) throw new Error(`Erreur HTTP ${response.status}`);
       const data = await response.json();
       if (data.error) throw new Error(data.error);
+      stopProcessingTimer();
       setTranscription(data.transcription);
       setState("done");
       onTranscription(data.transcription);
     } catch (err) {
+      stopProcessingTimer();
       setError(err instanceof Error ? err.message : "Erreur ASR inconnue.");
       setState("error");
     }
@@ -168,6 +196,8 @@ export default function ASRPanel({ onTranscription }: ASRPanelProps) {
     setError("");
     setState("idle");
     setRecordingTime(0);
+    setElapsedMs(null);
+    setProcessingMs(0);
   };
 
   const copyText = () => {
@@ -180,7 +210,10 @@ export default function ASRPanel({ onTranscription }: ASRPanelProps) {
   const formatTime = (s: number) =>
     `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 
-  useEffect(() => () => { if (timerRef.current) clearInterval(timerRef.current); }, []);
+  useEffect(() => () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (processingTimerRef.current) clearInterval(processingTimerRef.current);
+  }, []);
 
   return (
     <div className={`flex flex-col h-full rounded-2xl border bg-panel transition-all duration-500 overflow-hidden
@@ -195,9 +228,27 @@ export default function ASRPanel({ onTranscription }: ASRPanelProps) {
         <span className="font-display text-xs font-semibold tracking-[0.15em] uppercase text-text-secondary">
           ASR
         </span>
-        <span className="text-text-dim text-xs font-body ml-auto">
+        <span className="text-text-dim text-xs font-body ml-auto hidden sm:inline">
           Reconnaissance vocale · Fon
         </span>
+        <LatencyBadge
+          color="accent-asr"
+          state={state === "processing" ? "live" : state === "done" ? "done" : "idle"}
+          liveMs={processingMs}
+          finalMs={elapsedMs}
+        />
+      </div>
+
+      {/* Model info */}
+      <div className="flex items-center gap-2 px-4 sm:px-5 py-2 border-b border-border/60 bg-surface/30">
+        <span className="text-[9px] font-display font-semibold tracking-widest uppercase text-text-dim shrink-0">
+          Modèle
+        </span>
+        <ModelBadge
+          name="asrDIL/mms-fongbe-finetuned-v4"
+          url="https://huggingface.co/asrDIL/mms-fongbe-finetuned-v4"
+          color="accent-asr"
+        />
       </div>
 
       {/* Body */}
